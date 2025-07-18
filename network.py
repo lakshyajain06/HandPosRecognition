@@ -16,7 +16,6 @@ class HandModel(tf.keras.Model):
         super().__init__()
 
         self.feature_extraction = tf.keras.Sequential([
-            tf.keras.layers.Lambda(lambda x: x - 0.5),  # normalize input form -0.5 to 0.5
             tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', strides=1, activation='relu', name='conv1_1'),
             tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', strides=1, activation='relu', name='conv1_2'),
             tf.keras.layers.MaxPool2D(pool_size=(2, 2), name='max_pool1'),
@@ -54,6 +53,10 @@ class HandModel(tf.keras.Model):
         self.stage_6 = create_stage_layer(6)
 
     def call(self, x):
+
+        # normalized = tf.cast(x, tf.float32)
+        # normalized = tf.keras.applications.vgg19.preprocess_input(x)
+
         features = self.feature_extraction(x)
         features = self.cpm_start(features)
 
