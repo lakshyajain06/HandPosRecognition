@@ -8,7 +8,7 @@ from process_data import get_points_from_map
 model = HandModel()
 dummy_input = np.zeros((1, 368, 368, 3))
 model(dummy_input)
-model.load_weights("good progress models/vgg19_train_full_dataset4.h5")
+model.load_weights("vgg19_pretrain_synth_dataset_epoch35_lr_custom_norm.h5")
 
 
 

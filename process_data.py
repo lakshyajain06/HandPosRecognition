@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import cv2 as cv
-import matplotlib.image as img
 import json
 from os.path import join
 
@@ -27,7 +26,7 @@ split = int(0.6 * len(img_path_synth2 + img_path_synth3))
 
 def load_img_and_pos_with_num(num):
     imgname = str(num).rjust(8, '0')
-    hand_img = img.imread(join(synth2_folder, imgname + ".jpg"))
+    hand_img = cv.imread(join(synth2_folder, imgname + ".jpg"))
 
     with open(join(synth2_folder, imgname + ".json")) as d:
         keypoints = json.load(d)
@@ -41,7 +40,7 @@ def load_data_from_path(img_path, points_path):
     img_path = img_path.numpy().decode('utf-8')
     points_path = points_path.numpy().decode('utf-8')
 
-    hand_img = img.imread(img_path)
+    hand_img = cv.imread(img_path)
 
     with open(points_path) as d:
         keypoints = json.load(d)
@@ -95,13 +94,18 @@ def create_heat_map(points, sigma = 0.8):
 
     return heat_maps
 
+def normalize_data(img):
+    data = tf.cast(img, tf.float32) / 255.0
+    data -= 0.5
+    return data
+
 def process_y(x, y):
+    x_processed = normalize_data(x)
     y_processed = tf.numpy_function(create_heat_map, [y], tf.float32)
     y_processed.set_shape([output_img_height, output_img_width, num_joints + 1])
-    return x, y_processed
+    return x_processed, y_processed
 
 def get_data_set():
-
 
     all_img_path = sorted(img_path_synth2 + img_path_synth3)
     all_point_path = sorted(point_path_synth2 + point_path_synth3)
