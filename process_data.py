@@ -100,10 +100,10 @@ def normalize_data(img):
     return data
 
 def process_y(x, y):
-    x_processed = normalize_data(x)
+    # x_processed = normalize_data(x)
     y_processed = tf.numpy_function(create_heat_map, [y], tf.float32)
     y_processed.set_shape([output_img_height, output_img_width, num_joints + 1])
-    return x_processed, y_processed
+    return x, y_processed
 
 def get_data_set():
 

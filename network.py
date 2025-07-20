@@ -15,6 +15,8 @@ class HandModel(tf.keras.Model):
     def __init__(self):
         super().__init__()
 
+        self.normalize = tf.keras.layers.Lambda(lambda x: (tf.cast(x, tf.float32) / 255.0) - 0.5)
+
         self.feature_extraction = tf.keras.Sequential([
             tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', strides=1, activation='relu', name='conv1_1'),
             tf.keras.layers.Conv2D(filters=64, kernel_size=(3, 3), padding='same', strides=1, activation='relu', name='conv1_2'),
@@ -41,6 +43,8 @@ class HandModel(tf.keras.Model):
 
         self.cpm_start = tf.keras.layers.Conv2D(filters=128, kernel_size=(3, 3), padding='same', strides=1, activation='relu', name='conv5_3_CPM')
 
+        self.attach = tf.keras.layers.Concatenate(axis=3, name='Concat_Prev_stage')
+
         self.stage_1 = tf.keras.Sequential([
             tf.keras.layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', strides=1, activation='relu', name='conv6_1_CPM'),
             tf.keras.layers.Conv2D(filters=22, kernel_size=(3, 3), padding='same', strides=1, name='conv6_2_CPM')
@@ -54,17 +58,17 @@ class HandModel(tf.keras.Model):
 
     def call(self, x):
 
-        # normalized = tf.cast(x, tf.float32)
+        normalized = self.normalize(x)
         # normalized = tf.keras.applications.vgg19.preprocess_input(x)
-
-        features = self.feature_extraction(x)
+    
+        features = self.feature_extraction(normalized)
         features = self.cpm_start(features)
 
         stage1 = self.stage_1(features)
-        self.stage2 = self.stage_2(tf.keras.layers.Concatenate(axis=3)([features, stage1]))
-        self.stage3 = self.stage_3(tf.keras.layers.Concatenate(axis=3)([features, self.stage2]))
-        self.stage4 = self.stage_4(tf.keras.layers.Concatenate(axis=3)([features, self.stage3]))
-        self.stage5 = self.stage_5(tf.keras.layers.Concatenate(axis=3)([features, self.stage4]))
-        self.stage6 = self.stage_6(tf.keras.layers.Concatenate(axis=3)([features, self.stage5]))
+        stage2 = self.stage_2(self.attach([features, stage1]))
+        stage3 = self.stage_3(self.attach([features, stage2]))
+        stage4 = self.stage_4(self.attach([features, stage3]))
+        stage5 = self.stage_5(self.attach([features, stage4]))
+        stage6 = self.stage_6(self.attach([features, stage5]))
 
-        return self.stage6, [self.stage2, self.stage3, self.stage4, self.stage5] # (final belief map, intermediate belief maps)
+        return stage6, [stage2, stage3, stage4, stage5] # (final belief map, intermediate belief maps)
