@@ -209,3 +209,10 @@ __marimo__/
 # models
 *.h5
 *.keras
+
+# data
+data/
+
+# test notebooks
+hand_pose_model.ipynb
+data_process_test.ipynb
