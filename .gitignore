@@ -209,6 +209,7 @@ __marimo__/
 # models
 *.h5
 *.keras
+good\ progress\ models/
 
 # data
 data/

@@ -40,10 +40,12 @@ def crop_data(img, points, new_border, new_size):
         cropped = cv.copyMakeBorder(cropped, pad_top_left[1], pad_bottom_right[1], pad_top_left[0], pad_bottom_right[0], cv.BORDER_REPLICATE) 
 
 
-    if new_size[0] < img_w or new_size[1] < img_h:
+    if scale < 1:
         inter_mode = cv.INTER_AREA
+        print("inter_area")
     else:
         inter_mode = cv.INTER_CUBIC
+        print("cubic")
 
     cropped = cv.resize(cropped, new_size, interpolation=inter_mode)
 
@@ -182,11 +184,11 @@ class MultiBootStrapDataLoader():
 
         train_data = train_data.map(self.tf_read_data)
         train_data = train_data.map(self.tf_process_y)
-        train_data = train_data.batch(self.batch_size).prefetch(5)
+        train_data = train_data.batch(self.batch_size).prefetch(3)
 
         val_data = val_data.map(self.tf_read_data)
         val_data = val_data.map(self.tf_process_y)
-        val_data = val_data.batch(self.batch_size).prefetch(5)
+        val_data = val_data.batch(self.batch_size).prefetch(3)
 
         return train_data, val_data
 
@@ -271,11 +273,11 @@ class SynthDataLoader():
 
         train_data = train_data.map(self.tf_read_data)
         train_data = train_data.map(self.tf_process_y)
-        train_data = train_data.batch(self.batch_size).prefetch(5)
+        train_data = train_data.batch(self.batch_size).prefetch(2)
 
         val_data = val_data.map(self.tf_read_data)
         val_data = val_data.map(self.tf_process_y)
-        val_data = val_data.batch(self.batch_size).prefetch(5)
+        val_data = val_data.batch(self.batch_size).prefetch(2)
 
         return train_data, val_data
 
