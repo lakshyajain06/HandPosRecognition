@@ -5,10 +5,10 @@ import numpy as np
 from network import HandModel
 from utils.model_utils import get_points_from_map
 
-model = HandModel()
-dummy_input = np.zeros((1, 368, 368, 3))
-model(dummy_input)
-model.load_weights("good progress models/vgg_19_multibootstap_epoch25/curr_vgg19_train_epoch_25.h5")
+# model = HandModel()
+# dummy_input = np.zeros((1, 368, 368, 3))
+# model(dummy_input)
+# model.load_weights("good progress models/vgg_19_multibootstap_epoch25/curr_vgg19_train_epoch_25.h5")
 
 
 
@@ -50,14 +50,14 @@ capture.set(cv.CAP_PROP_FRAME_HEIGHT, size)
 while True:
     isTrue, frame = capture.read()
 
-    frame = cv.resize(frame, (368, 368), interpolation=cv.INTER_LINEAR)
-    rgb_frame = np.expand_dims(frame, axis=0)
-    heat_maps, _ = model(rgb_frame)
+    # frame = cv.resize(frame, (368, 368), interpolation=cv.INTER_LINEAR)
+    # rgb_frame = np.expand_dims(frame, axis=0)
+    # heat_maps, _ = model(rgb_frame)
     
 
-    points = get_points_from_map(heat_maps[0].numpy(), (368, 368))
+    # points = get_points_from_map(heat_maps[0].numpy(), (368, 368))
 
-    draw_hand(frame, points)
+    # draw_hand(frame, points)
 
     cv.imshow('video', frame)
     if cv.waitKey(20) & 0xFF==ord('d'):
