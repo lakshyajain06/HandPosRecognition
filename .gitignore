@@ -218,5 +218,8 @@ data/
 hand_pose_model.ipynb
 data_process_test.ipynb
 
+# logging
+wandb/
+
 # mac files
 .DS_Store

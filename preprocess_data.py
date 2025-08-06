@@ -203,8 +203,14 @@ class MultiBootStrapDataLoader():
 
     def get_num_batches(self):
         return (int(self.split_ratio * len(self.all_data)) + self.batch_size - 1) // self.batch_size
-    
+
     def get_random_sample(self):
+        """
+        Gets random data point \n
+        Input: None \n
+        Output: img, heatmaps, hand pose
+        """
+        
         img, pose = self.read_data(np.random.randint(len(self.all_data)))
 
         maps = create_heat_map(pose, self.img_size, self.output_img_size)
