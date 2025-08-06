@@ -7,16 +7,25 @@ num_joints = 21
 
 def get_hand_bounds(points):
 
-    max_xy = np.max(points, axis=0)
-    min_xy = np.min(points, axis=0)
+    max_hands_xy = np.max(points, axis=0)
+    min_hands_xy = np.min(points, axis=0)
 
-    center = (max_xy + min_xy) / 2
+    center = (max_hands_xy + min_hands_xy) / 2
 
-    point_box_size = max_xy - min_xy
+    point_box_size = max_hands_xy - min_hands_xy
+    hand_box_size = np.max(point_box_size)
 
-    half_new_size = np.max(point_box_size)
+    min_box = np.array([[center - hand_box_size / 2], [center + hand_box_size / 2]])
 
-    new_box = (center - half_new_size, center + half_new_size)
+    scale_val = np.random.randint(1, 5)
+    new_box_size = hand_box_size * scale_val
+    
+    new_box = (center - new_box_size // 2, center + new_box_size // 2)
+
+    if scale_val > 1:
+        offset_max = new_box_size - hand_box_size
+        offset = np.array([np.random.randint(offset_max) - (offset_max // 2), np.random.randint(offset_max) - (offset_max // 2)])
+        new_box += offset
 
     return new_box
 
