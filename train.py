@@ -1,6 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2 as cv
 
 import wandb
@@ -24,8 +23,8 @@ def compute_loss(y_pred, intermediate_pred, y):
 
 @tf.function
 def compute_mpjpe(predicted_map, true_map):
-    predicted_pos = get_points_from_map_tf(predicted_map)
-    true_pos = get_points_from_map_tf(true_map)
+    predicted_pos = get_points_from_map_tf(predicted_map, (368, 368))
+    true_pos = get_points_from_map_tf(true_map, (368, 368))
     error = tf.norm(tf.cast(predicted_pos, tf.float32) - tf.cast(true_pos, tf.float32), axis=-1)
     return tf.reduce_mean(error)
 
@@ -131,7 +130,7 @@ def main(num_epochs = 20):
             "learning_schedule": "Cosine Decay",
             "optimizer": "Adam",
             "dataset": "CMU Panoptic Studio Hands by Multiview Bootstrapping",
-            "epochs": 20,
+            "epochs": 30,
         },
     )
 
@@ -147,7 +146,7 @@ def main(num_epochs = 20):
         model.feature_extraction.layers[i - 1].set_weights(copy_model.layers[i].get_weights())
 
     # loading the training and validation dataset 
-    loader = MultiBootStrapDataLoader("data/hand143_panopticdb/", 16, 0.8)
+    loader = MultiBootStrapDataLoader("data/hand143_panopticdb/", 64, 0.8)
     train_data, val_data = loader.get_data_set()
     num_batches = loader.get_num_batches()
 
@@ -177,13 +176,10 @@ def main(num_epochs = 20):
         train_accuracy, test_accuracy,
         logger, 
         "checkpoints"
-    )
-    logger.alert(
-        title="Training Finished",
-        text="Finished training successfully"
-    )
+    )   
+
     logger.finish()
     
  
 if __name__ == "__main__":
-    main(1)
+    main(30)

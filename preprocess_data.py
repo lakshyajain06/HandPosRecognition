@@ -51,10 +51,10 @@ def crop_data(img, points, new_border, new_size):
 
     if scale < 1:
         inter_mode = cv.INTER_AREA
-        print("inter_area")
+        #print("inter_area")
     else:
         inter_mode = cv.INTER_CUBIC
-        print("cubic")
+        #print("cubic")
 
     cropped = cv.resize(cropped, new_size, interpolation=inter_mode)
 
@@ -197,7 +197,7 @@ class MultiBootStrapDataLoader():
 
         val_data = val_data.map(self.tf_read_data)
         val_data = val_data.map(self.tf_process_y)
-        val_data = val_data.batch(self.batch_size).prefetch(3)
+        val_data = val_data.batch(self.batch_size).prefetch(tf.data.AUTOTUNE)
 
         return train_data, val_data
 

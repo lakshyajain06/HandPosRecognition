@@ -206,10 +206,8 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# models
-*.h5
-*.keras
-good\ progress\ models/
+# checkpoints
+checkpoints/
 
 # data
 data/
